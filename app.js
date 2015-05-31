@@ -7,8 +7,11 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
+var rc = require('./controllers/race_controller')
+
 var routes = require('./routes/index');
 var users = require('./routes/users');
+var admin = require('./routes/admin');
 
 var ua = require('universal-analytics');
 
@@ -16,11 +19,13 @@ var visitor = ua('UA-27923958-9');
 
 var app = express();
 
+
+
 noble.on('stateChange', function(state) {
   if (state === 'poweredOn') {
-    noble.startScanning();
+    noble.startScanning([],true);
   } else {
-    noble.stopScanning();
+    noble.stopScanning([],true);
   }
 });
 
@@ -70,8 +75,6 @@ setInterval(function() {
   }
 }, EXIT_GRACE_PERIOD / 2);
 
-noble.startScanning([], true);
-
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
@@ -85,38 +88,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
+app.use('/admin', admin);
 app.use('/users', users);
-
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  var err = new Error('Not Found');
-  err.status = 404;
-  next(err);
-});
-
-// error handlers
-
-// development error handler
-// will print stacktrace
-if (app.get('env') === 'development') {
-  app.use(function(err, req, res, next) {
-    res.status(err.status || 500);
-    res.render('error', {
-      message: err.message,
-      error: err
-    });
-  });
-}
-
-// production error handler
-// no stacktraces leaked to user
-app.use(function(err, req, res, next) {
-  res.status(err.status || 500);
-  res.render('error', {
-    message: err.message,
-    error: {}
-  });
-});
-
 
 module.exports = app;
