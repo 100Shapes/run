@@ -1,5 +1,14 @@
 var Types = require('hapi').types;
 
+var ua = require('universal-analytics');
+var visitor = ua('UA-27923958-9');
+
+var Datastore = require('nedb');
+
+db = {};
+db.runners = new Datastore({ filename: 'db/runners', autoload: true });
+db.laps = new Datastore({ filename: 'db/laps', autoload: true });
+
 module.exports = [{
     method: 'GET',
     path: '/runners',
@@ -7,7 +16,7 @@ module.exports = [{
         handler: getRunners,
         validate: {
             payload: {
-                id: Types.String()
+                bid: Types.String()
             }
         }
     }
@@ -19,8 +28,9 @@ module.exports = [{
         payload: 'parse',
         validate: {
             payload: {
-                id: Types.String().required().min(3),
-                name: Types.String().required().min(3)
+                bid: Types.String().required().min(3),
+                name: Types.String().required().min(3),
+                team: Types.String()
             }
         }
     }
@@ -32,7 +42,7 @@ module.exports = [{
         payload: 'parse',
         validate: {
             payload: {
-                id: Types.String().required().min(3)
+                bid: Types.String().required().min(3)
             }
         }
     }
@@ -44,52 +54,87 @@ module.exports = [{
         payload: 'parse',
         validate: {
             payload: {
-                id: Types.String().required().min(3),
+                bid: Types.String().required().min(3),
             }
         }
     }
 }];
 
-var laps = [];
-var runners = [];
-
 function getRunners(request) {
-    if (request.query.id) {
-        request.reply(getRunner(request.query.id));
-    }
-    else {
-        request.reply(runners);
+    if (request.query.bid) {
+        getRunner(request)
+    } else {
+        db.runners.find({}, function (err, runners) {
+            if (err) {
+                console.log(err);
+            } else {
+                request.reply(runners).code(200);
+            }
+        });
     } 
 }
 
 function getRunner(request) {
-    var runner = runners.filter(function(p) {
-        return p.id === parseInt(request.params.id);
-    }).pop();
+    // var runner = runners.filter(function(p) {
+    //     return p.id === parseInt(request.params.id);
+    // }).pop();
 
-    request.reply(runner);
+    db.runners.findOne({ bid: request.query.bid }, function (err, runner) {
+        if (err) {
+            console.log(err);
+        } else {
+            request.reply(runner);
+        }
+    });
 }
 
 function addRunner(request) {
     var runner = {
-        id: request.payload.id,
+        bid: request.payload.bid,
         name: request.payload.name,
+        team:request.payload.team
     };
 
-    runners.push(runner);
-    request.reply(runner).code(200);
+    db.runners.insert(runner, function (err, newRunner) {
+        if (err) {
+            console.log(err);
+        } else {
+            request.reply(newRunner).code(200);
+        }
+    });
 }
 
 function getLaps(request) {
-    request.reply(laps);
+    db.laps.find({}, function (err, laps) {
+      if (err) {
+            console.log(err);
+        } else {
+            request.reply(laps).code(200);
+        }
+    });
 }
 
 function addLap(request) {
     var lap = {
-        id: request.payload.id,
+        bid: request.payload.bid,
         time: new Date()
     };
+    visitor.event({
+        ec:'Runner Tracking',
+        ea:'Runner Passed',
+        el: lap.bid,
+        ev: lap.time
+    }, function (err) {
+        if (err){console.log(err)};
+    });
 
-    laps.push(lap);
-    request.reply(lap).code(200);
+    db.laps.insert(lap, function (err, newLap) {
+        if (err) {
+            console.log(err);
+        } else {
+            request.reply(newLap).code(200);
+        }
+    });
+
+    
 }
