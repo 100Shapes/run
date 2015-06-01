@@ -1,9 +1,21 @@
 var Hapi = require('hapi');
-var routes = require('./routes');
+var backend = require('./backend');
+var frontend = require('./frontend');
+var bluetooth = require('./bluetooth');
+var Path = require('path');
 
-var config = { };
-var server = new Hapi.Server('0.0.0.0', 8080, config);
+var server = new Hapi.Server();
 
-server.addRoutes(routes);
+server.connection({ port: 8080 });
+
+server.views({
+    engines: {
+        html: require('handlebars')
+    },
+    path: Path.join(__dirname, 'templates')
+});
+
+server.route(backend);
+server.route(frontend);
 
 server.start();
