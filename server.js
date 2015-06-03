@@ -1,7 +1,9 @@
 var Hapi = require('hapi');
 
-var server = new Hapi.Server();
+var server = new Hapi.Server({ debug: { 'request': ['error', 'uncaught', 'hapi-less'] }});
+
 server.connection({ port: 8080 });
+
 
 var backend = require('./server/backend')(server);
 var methods = require('./server/methods')(server);

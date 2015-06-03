@@ -26,4 +26,19 @@ module.exports = function(server) {
             }
         }
     });
+    server.register({
+        register: require('hapi-less'),
+        options: {
+            home: __dirname + '/../public/less',
+            route: '/public/styles/{filename*}',
+            less: {
+                compress: true
+            }
+        }
+    }, function (err) {
+     
+        if (err) {
+            console.log('Failed loading hapi-less');
+        }
+    });
 };

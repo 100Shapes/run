@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
   	<meta charset="utf-8">
-  	<link rel="stylesheet" type="text/css" href="/public/css/styles.css">
+  	<link rel="stylesheet" type="text/css" href="/public/styles/main.css">
   	<title>Runners Tracker</title>
 </head>
-<body ng-app="runApp" ng-controller="indexController">
+<body class='index' ng-app="runApp" ng-controller="indexController">
 	<ul ng-repeat="runner in top">
 		<li>
 			{{ runner.name }} <span ng-repeat="lap in getTimes(runner.laps) track by $index"> * </span>
