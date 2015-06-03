@@ -1,21 +1,16 @@
 var Hapi = require('hapi');
-var backend = require('./backend');
-var frontend = require('./frontend');
-var bluetooth = require('./bluetooth');
-var Path = require('path');
 
 var server = new Hapi.Server();
-
 server.connection({ port: 8080 });
 
-server.views({
-    engines: {
-        html: require('handlebars')
-    },
-    path: Path.join(__dirname, 'templates')
+var backend = require('./routes/backend')(server);
+var database = require('./routes/database')(server);
+var frontend = require('./routes/frontend')(server);
+var bluetooth = require('./bluetooth')(server);
+var Path = require('path');
+
+server.start(function() {
+    console.log("Server started", server.info.uri);
 });
 
-server.route(backend);
-server.route(frontend);
-
-server.start();
+module.exports = server;

@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+<head>
+  	<meta charset="utf-8">
+  	<link rel="stylesheet" type="text/css" href="/public/css/styles.css">
+  	<title>Runners Tracker</title>
+</head>
+<body ng-app="runApp" ng-controller="indexController">
+	<ul ng-repeat="runner in top">
+		<li>
+			{{ runner.name }} <span ng-repeat="lap in getTimes(runner.laps) track by $index"> * </span>
+		</li>
+	</ul>
+	
+  	<script src="public/js/vendor/angular.min.js"></script>
+  	<script src="public/js/app.js"></script>
+</body>
+</html>

@@ -1,54 +1,59 @@
 var noble = require('noble');
-var backend = require('./backend');
-
-
-function addLap (bid) {
-	backend.addLap(bid, function(err, newLap){
-		if (err) {
-			console.log(err);
-		} else {
-			//
-		}
-	});   
-}
-
-noble.on('stateChange', function(state) {
- 	if (state === 'poweredOn') {
-		noble.startScanning([],true);
-  	} else {
-		noble.stopScanning([],true);
-  	}
-});
 
 var inRange = [];
+var WINDOW = 5000;	 // milliseconds
 
-var WINDOW = 5000; // milliseconds
 
-noble.on('discover', function(peripheral) {
+module.exports = function(server) {
 
-  	var uuid = peripheral.uuid;
+	function addLap(uuid){
+		var lap = {
+		    bid: uuid,
+		    time: new Date()
+		}
+		server.methods.logLaps(lap);
+		server.methods.addLaps(lap, function(err, newLap) {
+		    if (err) {
+		        console.log(err);
+		    } else {
+		        reply(newLap).code(200);
+		    }
+		});
+	}
 
-  	if (!inRange[uuid]) {
-		inRange[uuid] = {
-	  		peripheral: peripheral
-		};
-		addLap(uuid);
-  	} 
+    noble.on('stateChange', function(state) {
+	 	if (state === 'poweredOn') {
+			noble.startScanning([],true);
+	  	} else {
+			noble.stopScanning([],true);
+	  	}
+	});
 
-  	inRange[uuid].lastSeen = Date.now();
-});
+	noble.on('discover', function(peripheral) {
 
-setInterval(function() {
-  	for (var uuid in inRange) {
+	  	var uuid = peripheral.uuid;
 
-  		console.log (inRange[uuid].peripheral.rssi, inRange[uuid].peripheral.uuid);
+	  	if (!inRange[uuid]) {
+			inRange[uuid] = {
+		  		peripheral: peripheral
+			};
+			addLap(uuid)
+		}
+	  	inRange[uuid].lastSeen = Date.now();
+	});
 
-  		if (inRange[uuid].lastSeen < (Date.now() - WINDOW)) {
-  			console.log ('out of window', uuid);
-  			
-  			delete inRange[uuid];
-  		} 
-	  	
-  	}
-}, WINDOW/10);
+	setInterval(function() {
+	  	for (var uuid in inRange) {
+
+	  		console.log (inRange[uuid].peripheral.rssi, inRange[uuid].peripheral.uuid);
+
+	  		if (inRange[uuid].lastSeen < (Date.now() - WINDOW)) {
+	  			console.log ('out of window', uuid);
+	  			
+	  			delete inRange[uuid];
+	  		} 
+		  	
+	  	}
+	}, WINDOW/10);
+};
 
