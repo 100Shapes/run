@@ -10,8 +10,8 @@ Designed to be run remotely on a PI with a bluetooth 4.0 dongle + Bluetooth 4.0 
 to run:
 
 if on linux/Pi:
-    - sudo apt-get install bluetooth bluez-utils libbluetooth-dev
+    1. sudo apt-get install bluetooth bluez-utils libbluetooth-dev
 
 all:
-    - npm install
-    - npm start
+    1. npm install
+    2. npm start
