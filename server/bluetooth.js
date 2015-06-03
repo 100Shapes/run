@@ -1,4 +1,5 @@
 var noble = require('noble');
+var _ = require('lodash');
 
 var inRange = [];
 var WINDOW = 5000;	 // milliseconds
@@ -6,17 +7,32 @@ var WINDOW = 5000;	 // milliseconds
 
 module.exports = function(server) {
 
+	server.method('getNearest', function (next) {
+        nearest_devices = inRange;
+
+        console.log(inRange, nearest_devices);
+
+        
+        // var device = {
+        //             nearest.peripheral.uuid: uuid,
+        //             nearest.peripheral.rssi: rssi
+        //         }
+        next(inRange);
+    });
+
+
+
 	function addLap(uuid){
 		var lap = {
 		    bid: uuid,
 		    time: new Date()
 		}
-		server.methods.logLaps(lap);
-		server.methods.addLaps(lap, function(err, newLap) {
+		server.methods.logLap(lap);
+		server.methods.addLap(lap, function(err, newLap) {
 		    if (err) {
 		        console.log(err);
 		    } else {
-		        reply(newLap).code(200);
+		        console.log(newLap);
 		    }
 		});
 	}
@@ -40,6 +56,7 @@ module.exports = function(server) {
 			addLap(uuid)
 		}
 	  	inRange[uuid].lastSeen = Date.now();
+	  	inRange[uuid].peripheral.rssi = peripheral.rssi;
 	});
 
 	setInterval(function() {

@@ -1,4 +1,4 @@
-var Types = require('Joi');
+var Types = require('joi');
 var _ = require('lodash');
 
 module.exports = function(server) {
@@ -128,6 +128,16 @@ module.exports = function(server) {
         handler: function (request, reply) {
             server.methods.getTop( function(top) {
                 reply(top).code(200);
+            });
+        }
+    });
+
+    server.route({
+        method: 'GET',
+        path: '/nearest',
+        handler: function (request, reply) {
+            server.methods.getNearest( function(nearest_device) {
+                reply(nearest_device).code(200);
             });
         }
     });

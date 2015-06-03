@@ -1,4 +1,4 @@
-var Types = require('Joi');
+var Types = require('joi');
 var _ = require('lodash');
 
 var ua = require('universal-analytics');
