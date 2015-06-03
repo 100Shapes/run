@@ -8,16 +8,27 @@ var WINDOW = 5000;	 // milliseconds
 module.exports = function(server) {
 
 	server.method('getNearest', function (next) {
-        nearest_devices = inRange;
+        var nearest_devices = [];
 
-        console.log(inRange, nearest_devices);
+		for (var key in inRange) {
+		    if (inRange.hasOwnProperty(key)) {
+		      nearest_devices.push(inRange[key].peripheral);  
+		    }
+		}
 
-        
-        // var device = {
-        //             nearest.peripheral.uuid: uuid,
-        //             nearest.peripheral.rssi: rssi
-        //         }
-        next(inRange);
+		if (nearest_devices.length > 0) {
+			nearest_devices = _.sortBy(nearest_devices, function(n) {
+			  return Math.min(n.rssi);
+			});
+	        var device = {
+	                    bid: nearest_devices[0].uuid,
+	                    rssi: nearest_devices[0].rssi
+	                }
+	        next(device);
+		} else {
+			next();
+		}
+		
     });
 
 

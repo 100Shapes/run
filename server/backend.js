@@ -44,11 +44,15 @@ module.exports = function(server) {
                 start_time:request.payload.team,
                 team:request.payload.team
             };
-            server.methods.addRunner(runner, function(err, newRunner) {
+            server.methods.addRunner(runner, function(err, newRunner, duplicate) {
                 if (err) {
                     console.log(err);
                 } else {
-                    reply(newRunner).code(200);
+                    if (duplicate) {
+                        reply(newRunner).code(400);
+                    } else {
+                        reply(newRunner).code(200);
+                    }
                 }
             });
         },
@@ -136,8 +140,8 @@ module.exports = function(server) {
         method: 'GET',
         path: '/nearest',
         handler: function (request, reply) {
-            server.methods.getNearest( function(nearest_device) {
-                reply(nearest_device).code(200);
+            server.methods.getNearest( function(nearest_devices) {
+                reply(nearest_devices).code(200);
             });
         }
     });

@@ -19,8 +19,14 @@ module.exports = function(server) {
         db.runners.findOne({ bid: bid }, next);
     });
 
-    server.method('addRunner', function (runner, next) {
-        db.runners.insert(runner, next);
+    server.method('addRunner', function (runner, next, duplicate) {
+        db.runners.findOne({ bid: runner.bid }, function(err, duplicate) { 
+            if (duplicate) {
+                next(err, duplicate, true)
+            } else {
+                db.runners.insert(runner, next, false);
+            }
+        });
     });
 
     server.method('getLaps', function (next) {

@@ -18,16 +18,48 @@ rta.controller('indexController', ['$scope', '$interval', 'dataFactory', functio
 
 }]);
 
-rta.controller('adminController', ['$scope', 'dataFactory', function($scope, dataFactory) {
-  dataFactory.getRunners().success(function (runners) {
-    $scope.runners = runners;
-  })
+rta.controller('adminController', ['$scope', '$interval', 'dataFactory', function($scope, $interval, dataFactory) {
 
-  dataFactory.getLaps().success(function (laps) {
-    $scope.laps = laps;
-  })
+  update_runners();
+
+  $scope.new_runner = {};
+
+  $scope.add = function(runner) {
+    dataFactory.addRunner(runner).success(function (newRunner) {
+      $scope.message = "Runner " + newRunner.name + " Added";
+      update_runners();
+    })
+    .error(function(data, status, headers, config) {
+      if (status = 400){
+        $scope.message = "Runner exists: " + data.bid + " " + data.name;
+      } else {
+        console.log(data);
+      }
+    });
+  };
+
+  $interval(function(){
+
+    dataFactory.getNearest().success(function (nearest_device) {
+      $scope.new_runner.bid = nearest_device.bid;
+      $scope.new_runner.rssi = nearest_device.rssi;
+    })
+
+  },400);
+
+  function update_runners() {
+    dataFactory.getRunners().success(function (runners) {
+      $scope.runners = runners;
+    })
+
+    dataFactory.getLaps().success(function (laps) {
+      $scope.laps = laps;
+    })
+  }
 
 }]);
+
+
 
 
 rta.factory('dataFactory', ['$http', function($http) {
@@ -59,8 +91,12 @@ rta.factory('dataFactory', ['$http', function($http) {
         return $http.post(urlBase + 'laps', lap);
     };
 
-    dataFactory.getTop = function (top) {
+    dataFactory.getTop = function () {
         return $http.get(urlBase + 'top');
+    };
+
+    dataFactory.getNearest = function () {
+        return $http.get(urlBase + 'nearest');
     };
 
     return dataFactory;

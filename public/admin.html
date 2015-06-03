@@ -2,11 +2,24 @@
 <html lang="en">
 <head>
   	<meta charset="utf-8">
+  	<link rel="stylesheet" type="text/css" href="/public/css/styles.css">
   	<title>Runners Tracker</title>
 </head>
 <body ng-app="runApp" ng-controller="adminController">
 
-	<li>{{ runners }}</li>
+	<form novalidate class="add-runner">
+	    BID: <input type="text" ng-model="new_runner.bid" /><span ng-show="new_runner.rssi">{{ new_runner.rssi }}</span><br />
+	    name: <input type="text" ng-model="new_runner.name" ng-show="new_runner.bid"/><br />
+	    <input type="submit" ng-click="add(new_runner)" ng-show="new_runner.bid" value="Save" />
+	</form>
+
+	<p>{{ message }}</p>
+
+	<ul ng-repeat="runner in runners">
+		<li>
+			{{ runner.name }} - {{ runner.bid }}
+		</li>
+	</ul>
 
   	<script src="public/js/vendor/angular.min.js"></script>
   	<script src="public/js/app.js"></script>
