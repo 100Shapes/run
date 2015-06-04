@@ -44,15 +44,11 @@ module.exports = function(server) {
                 start_time:request.payload.team,
                 team:request.payload.team
             };
-            server.methods.addRunner(runner, function(err, newRunner, duplicate) {
+            server.methods.addRunner(runner, function(err, newRunner) {
                 if (err) {
                     console.log(err);
                 } else {
-                    if (duplicate) {
-                        reply(newRunner).code(400);
-                    } else {
-                        reply(newRunner).code(200);
-                    }
+                    reply(newRunner).code(200);
                 }
             });
         },

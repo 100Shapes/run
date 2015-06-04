@@ -25,32 +25,37 @@ rta.controller('adminController', ['$scope', '$interval', 'dataFactory', functio
   $scope.new_runner = {};
 
   $scope.add = function(runner) {
-    dataFactory.addRunner(runner).success(function (newRunner) {
-      $scope.message = "Runner " + newRunner.name + " Added";
-      update_runners();
-    })
-    .error(function(data, status, headers, config) {
-      if (status = 400){
-        $scope.message = "Runner exists: " + data.bid + " " + data.name;
-      } else {
-        console.log(data);
-      }
-    });
+    runner.rssi = undefined;
+    dataFactory.addRunner(runner)
+      .success(function (newRunner) {
+        $scope.message = "Runner " + newRunner.name + " Added";
+      })
+      .error(function(data, status, headers, config) {
+        if (status = 400){
+         $scope.message = "Runner exists: " + data.bid + " " + data.name;
+        } else {
+         console.log(data);
+        }
+      });
   };
 
   $interval(function(){
+
+    update_runners();
 
     dataFactory.getNearest().success(function (nearest_device) {
       $scope.new_runner.bid = nearest_device.bid;
       $scope.new_runner.rssi = nearest_device.rssi;
     })
-
-  },400);
+    console.log('running...');
+  },500);
 
   function update_runners() {
     dataFactory.getRunners().success(function (runners) {
       $scope.runners = runners;
-    })
+    }).error(function(data, status, headers, config) {
+        console.log(data);
+    });
 
     dataFactory.getLaps().success(function (laps) {
       $scope.laps = laps;
