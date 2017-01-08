@@ -12,7 +12,8 @@ to run:
 
 ## if on linux/Pi:
 
-1. 'sudo apt-get install bluetooth bluez-utils libbluetooth-dev'
+1. 'sudo apt-get install bluetooth bluez libbluetooth-dev libudev-dev'
+2. 'sudo setcap cap_net_raw+eip $(eval readlink -f `which node`)'
 
 ## all:
 
