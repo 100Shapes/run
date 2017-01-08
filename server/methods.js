@@ -28,7 +28,11 @@ module.exports = function(server) {
     });
 
     server.method('getLapsByID', function (bid, next) {
-        db.laps.findOne({ bid: bid }, next);
+        db.laps.find({ bid: bid }, next);
+    });
+
+    server.method('getLastLapByID', function (bid, next) {
+        db.laps.findOne({ bid: bid }).sort({ time: -1 }).exec(next);
     });
 
     server.method('addLap', function (lap, next) {
@@ -43,7 +47,8 @@ module.exports = function(server) {
                     if (laps) {
                         top.push({
                             name: runner.name,
-                            laps: laps.length
+                            laps: laps.length,
+                            bid: runner.bid
                         })
                     }
                     if (i == runners.length-1) {
@@ -64,5 +69,5 @@ module.exports = function(server) {
         }, function (err) {
             if (err){console.log(err)};
         });
-    });   
+    });
 };

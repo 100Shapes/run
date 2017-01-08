@@ -5,6 +5,11 @@ rta.controller('indexController', ['$scope', '$interval', 'dataFactory', functio
   $interval(function(){
 
     dataFactory.getTop().success(function (top) {
+        top.forEach(function(runner){
+            dataFactory.getLastLapByID(runner.bid).success(function (lastlap) {
+              runner.lastlap = lastlap
+            })
+        });
       $scope.top = top;
     })
 
@@ -14,6 +19,9 @@ rta.controller('indexController', ['$scope', '$interval', 'dataFactory', functio
        return new Array(n);
   };
 
+  $interval(function(){
+
+  },1000);
 
 
 }]);
@@ -90,6 +98,10 @@ rta.factory('dataFactory', ['$http', function($http) {
 
     dataFactory.getLapsByID = function (bid) {
         return $http.get(urlBase + 'laps?bid=' + bid);
+    };
+
+    dataFactory.getLastLapByID = function (bid) {
+        return $http.get(urlBase + 'lastlap?bid=' + bid);
     };
 
     dataFactory.addLaps = function (lap) {

@@ -124,6 +124,27 @@ module.exports = function(server) {
 
     server.route({
         method: 'GET',
+        path: '/lastlap',
+        handler: function (request, reply) {
+            server.methods.getLastLapByID(request.query.bid, function(err, lastlap) {
+                if (err) {
+                    console.log(err);
+                } else {
+                    reply(lastlap).code(200);
+                }
+            });
+        },
+        config: {
+            validate: {
+                query: {
+                    bid: Types.string().required().min(3)
+                }
+            }
+        }
+    });
+
+    server.route({
+        method: 'GET',
         path: '/top',
         handler: function (request, reply) {
             server.methods.getTop( function(top) {
