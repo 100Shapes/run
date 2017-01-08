@@ -12,7 +12,7 @@ module.exports = function(server) {
 
 		for (var key in inRange) {
 		    if (inRange.hasOwnProperty(key)) {
-		      nearest_devices.push(inRange[key].peripheral);  
+		      nearest_devices.push(inRange[key].peripheral);
 		    }
 		}
 
@@ -28,7 +28,7 @@ module.exports = function(server) {
 		} else {
 			next();
 		}
-		
+
     });
 
 
@@ -36,7 +36,8 @@ module.exports = function(server) {
 	function addLap(uuid){
 		var lap = {
 		    bid: uuid,
-		    time: new Date()
+		    time: new Date(),
+			station: server.app.station_id
 		}
 		server.methods.logLap(lap);
 		server.methods.addLap(lap, function(err, newLap) {
@@ -77,10 +78,10 @@ module.exports = function(server) {
 
 	  		if (inRange[uuid].lastSeen < (Date.now() - WINDOW)) {
 	  			console.log ('out of window', uuid);
-	  			
+
 	  			delete inRange[uuid];
-	  		} 
-		  	
+	  		}
+
 	  	}
 	}, WINDOW/10);
 };

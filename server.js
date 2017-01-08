@@ -13,6 +13,7 @@ var Path = require('path');
 
 server.start(function() {
     console.log("Server started", server.info.uri);
+    server.app.station_id = process.env.STATION_ID || "Finish"
 });
 
 module.exports = server;
