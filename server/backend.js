@@ -73,7 +73,6 @@ module.exports = function(server) {
                     if (err) {
                         console.log(err);
                     } else {
-
                         reply(laps).code(200);
                     }
                 });

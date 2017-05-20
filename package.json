@@ -6,6 +6,7 @@
     "node": ">=0.10.5"
   },
   "dependencies": {
+    "bootstrap": "^3.3.7",
     "handlebars": "3.0.x",
     "hapi": "8.6.x",
     "hapi-less": "^0.1.1",

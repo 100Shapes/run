@@ -13,7 +13,7 @@ rta.controller('indexController', ['$scope', '$interval', 'dataFactory', functio
       $scope.top = top;
     })
 
-  },1000);
+  },1000, 1);
 
   $scope.getTimes=function(n){
        return new Array(n);
@@ -21,7 +21,7 @@ rta.controller('indexController', ['$scope', '$interval', 'dataFactory', functio
 
   $interval(function(){
 
-  },1000);
+  },1000, 1);
 
 
 }]);
@@ -118,4 +118,3 @@ rta.factory('dataFactory', ['$http', function($http) {
 
     return dataFactory;
 }]);
-

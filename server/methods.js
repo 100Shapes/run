@@ -36,7 +36,20 @@ module.exports = function(server) {
     });
 
     server.method('addLap', function (lap, next) {
-        db.laps.insert(lap, next);
+      db.laps.findOne({ bid: lap.bid }).sort({ time: -1 }).exec(function (err, lastlap) {
+        if (lastlap) {
+          lap.diff =  lap.time - lastlap.time
+          console.log("diff:", lap.diff);
+          if (lap.diff > (2 * 60 * 1000)) {
+            db.laps.insert(lap, next);
+          } else {
+            console.log("time infingment:", lap.diff, lap.bid);
+          }
+        } else {
+            lap.diff = 0
+            db.laps.insert(lap, next);
+        }
+      })
     });
 
     server.method('getTop', function (next) {

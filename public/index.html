@@ -1,17 +1,50 @@
 <!doctype html>
 <html lang="en">
+
 <head>
-  	<meta charset="utf-8">
-  	<link rel="stylesheet" type="text/css" href="/public/styles/main.css">
-  	<title>Runners Tracker</title>
+  <meta charset="utf-8">
+  <link href="public/css/vendor/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="/public/styles/main.css">
+  <title>Runners Tracker</title>
 </head>
+
 <body class='index' ng-app="runApp" ng-controller="indexController">
-    <ul ng-repeat="runner in top">
-		<li>
-			{{ runner.name }} {{ runner.lastlap.time }} <span ng-repeat="lap in getTimes(runner.laps) track by $index"> * </span>
-		</li>
-	</ul>
-  	<script src="public/js/vendor/angular.min.js"></script>
-  	<script src="public/js/app.js"></script>
+  <nav class="navbar navbar-light" style="background-color: #e3f2fd;">
+    <a class="navbar-brand" href="#">
+      <img src="/public/img/ariano-logo.png" height="30" class="d-inline-block align-top" alt=""> Corri Ariano
+    </a>
+  </nav>
+
+  <div class="container">
+     <div class="row">
+        <div class="col p-2">
+         <h1>Leaderboard</h1>
+       </div>
+     </div>
+
+    <div class="row">
+       <div class="col p-2">
+      <div class="d-flex flex-column" ng-repeat="runner in top">
+        <div class="p-2 d-flex justify-content-around align-items-center bg-faded rounded">
+          <div class="p-2">{{ runner.name }} {{ runner.lastlap.time | date:"m:ss.sss" }}</div>
+          <div class="align-self-center progress w-50" ng-if="runner.laps < 11">
+            <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" role="progressbar" style="width: {{runner.laps * 10}}%; height: 30px;" aria-valuenow="{{runner.laps}}" aria-valuemin="0" aria-valuemax="10"></div>
+          </div>
+          <div class="progress" ng-if="runner.laps > 10">
+            <span> COMPLETE </span>
+          </div>
+          <div class="display-4">{{ runner.laps }}</div>
+      </div>
+    </div>
+  </div>
+  </div>
+  <script src="public/js/vendor/jquery-3.1.1.slim.min.js"></script>
+  <script src="public/js/vendor/tether.min.js"></script>
+  <script src="public/js/vendor/bootstrap.min.js"></script>
+  <script src="public/js/vendor/angular.min.js"></script>
+  <script src="public/js/app.js"></script>
+
+
 </body>
+
 </html>
