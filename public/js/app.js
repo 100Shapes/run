@@ -31,6 +31,19 @@ rta.controller('adminController', ['$scope', '$interval', 'dataFactory', functio
   update_runners();
 
   $scope.new_runner = {};
+  $scope.current_comp = {};
+
+  dataFactory.getComps().success(function (comps) {
+    $scope.comps = comps;
+  })
+
+  $scope.add_comp = function () {
+    dataFactory.addComp($scope.new_comp)
+  }
+
+  $scope.set_comp = function() {
+    dataFactory.setComp($scope.current_comp)
+}
 
   $scope.add = function(runner) {
     runner.rssi = undefined;
@@ -64,10 +77,6 @@ rta.controller('adminController', ['$scope', '$interval', 'dataFactory', functio
     }).error(function(data, status, headers, config) {
         console.log(data);
     });
-
-    dataFactory.getLaps().success(function (laps) {
-      $scope.laps = laps;
-    })
   }
 
 }]);
@@ -90,6 +99,18 @@ rta.factory('dataFactory', ['$http', function($http) {
 
     dataFactory.addRunner = function (runner) {
         return $http.post(urlBase + 'runners', runner);
+    };
+
+    dataFactory.getComps = function () {
+        return $http.get(urlBase + 'comps')
+    };
+
+    dataFactory.setComp = function (comp) {
+        return $http.post(urlBase + 'comps/set', comp)
+    };
+
+    dataFactory.addComp = function () {
+        return $http.post(urlBase + 'comps')
     };
 
     dataFactory.getLaps = function () {

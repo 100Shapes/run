@@ -8,39 +8,42 @@ var Datastore = require('nedb');
 db = {};
 db.runners = new Datastore({ filename: 'db/runners', autoload: true });
 db.laps = new Datastore({ filename: 'db/laps', autoload: true });
+db.comp = new Datastore({ filename: 'db/comp', autoload: true });
 
 module.exports = function(server) {
 
     server.method('getRunners', function (next) {
-        db.runners.find({ }, next);
+        db.runners.find({ comp_id : server.app.current }, next);
     });
 
     server.method('getRunnerByID', function (bid, next) {
-        db.runners.findOne({ bid: bid }, next);
+        db.runners.findOne({ bid: bid, comp_id : server.app.current }, next);
     });
 
     server.method('addRunner', function (runner, next) {
+        runner.comp_id = server.app.current
         db.runners.insert(runner, next);
     });
 
     server.method('getLaps', function (next) {
-        db.laps.find({ }, next);
+        db.laps.find({ comp_id : server.app.current }, next);
     });
 
     server.method('getLapsByID', function (bid, next) {
-        db.laps.find({ bid: bid }, next);
+        db.laps.find({ bid: bid, comp_id : server.app.current }, next);
     });
 
     server.method('getLastLapByID', function (bid, next) {
-        db.laps.findOne({ bid: bid }).sort({ time: -1 }).exec(next);
+        db.laps.findOne({ bid: bid, comp_id : server.app.current }).sort({ time: -1 }).exec(next);
     });
 
     server.method('addLap', function (lap, next) {
-      db.laps.findOne({ bid: lap.bid }).sort({ time: -1 }).exec(function (err, lastlap) {
+      db.laps.findOne({ bid: lap.bid, comp_id : server.app.current }).sort({ time: -1 }).exec(function (err, lastlap) {
         if (lastlap) {
           lap.diff =  lap.time - lastlap.time
           console.log("diff:", lap.diff);
           if (lap.diff > (2 * 60 * 1000)) {
+            lap.comp_id = server.app.current
             db.laps.insert(lap, next);
           } else {
             console.log("time infingment:", lap.diff, lap.bid);
@@ -52,11 +55,29 @@ module.exports = function(server) {
       })
     });
 
+    server.method('getComp', function (comp_id, next) {
+        db.comp.findOne({ _id: comp_id }, next);
+    });
+
+    server.method('getComps', function (next) {
+        db.comp.find({ }, next);
+    });
+
+    server.method('setComp', function (comp_id, next) {
+        server.app.current = comp_id
+        db.comp.update({ current: true }, { current: false})
+        db.comp.update({ _id: comp_id }, { current: true},{}, next)
+    });
+
+    server.method('addComp', function (comp, next) {
+        db.comp.insert(comp, next);
+    });
+
     server.method('getTop', function (next) {
         var top = [];
-        db.runners.find({ }, function(err, runners) {
+        db.runners.find({comp_id : server.app.current}, function(err, runners) {
             _.forEach(runners, function(runner, i) {
-                db.laps.find({ bid: runner.bid }, function(err, laps) {
+                db.laps.find({ bid: runner.bid, comp_id : server.app.current }, function(err, laps) {
                     if (laps) {
                         top.push({
                             name: runner.name,

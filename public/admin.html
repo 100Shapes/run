@@ -8,6 +8,11 @@
 <body class='admin' ng-app="runApp" ng-controller="adminController">
 
 	<form novalidate class="add-runner">
+
+      Competition:
+      <select ng-repeat="comp in comps">
+        <option value="{{ comp._id }}">{{ comp.name }}</option>
+      </select> <br />
 	    BID: <input type="text" ng-model="new_runner.bid" /><span ng-show="new_runner.rssi">{{ new_runner.rssi }}</span><br />
 	    name: <input type="text" ng-model="new_runner.name" ng-show="new_runner.bid"/><br />
 	    <input type="submit" ng-click="add(new_runner)" ng-show="new_runner.bid" value="Save" />

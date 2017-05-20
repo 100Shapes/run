@@ -41,8 +41,8 @@ module.exports = function(server) {
             var runner = {
                 bid: request.payload.bid,
                 name: request.payload.name,
-                start_time:request.payload.team,
-                team:request.payload.team
+                start_time:request.payload.start_time,
+                team:request.payload.team,
             };
             server.methods.addRunner(runner, function(err, newRunner) {
                 if (err) {
@@ -58,7 +58,7 @@ module.exports = function(server) {
                     bid: Types.string().required().min(3),
                     name: Types.string().required().min(3),
                     start_time: Types.date(),
-                    team: Types.string()
+                    team: Types.string(),
                 }
             }
         }
@@ -137,6 +137,69 @@ module.exports = function(server) {
             validate: {
                 query: {
                     bid: Types.string().required().min(3)
+                }
+            }
+        }
+    });
+
+    server.route({
+        method: 'GET',
+        path: '/comps',
+        handler: function (request, reply) {
+            server.methods.getComps( function(err, comps) {
+                if (err) {
+                    console.log(err);
+                } else {
+                    reply(comps).code(200);
+                }
+            });
+        }
+    });
+
+    server.route({
+        method: 'POST',
+        path: '/comps',
+        handler: function (request, reply) {
+            var comp = {
+              name: request.payload.name,
+              laps: request.payload.laps,
+              desc: request.payload.desc,
+            };
+            server.methods.addComp(comp, function(err, comp) {
+                if (err) {
+                    console.log(err);
+                } else {
+                    reply(comp).code(200);
+                }
+            });
+        },
+        config: {
+            validate: {
+                payload: {
+                    name: Types.string().required().min(3),
+                    laps: Types.number().integer(),
+                    desc: Types.string(),
+                }
+            }
+        }
+    });
+
+    server.route({
+        method: 'POST',
+        path: '/comps/set',
+        handler: function (request, reply) {
+            server.methods.setComp(request.payload.comp_id, function(err, comp) {
+                if (err) {
+                    console.log(err);
+                } else {
+                    reply(comp).code(200);
+                }
+            });
+        },
+        config: {
+            validate: {
+                payload: {
+                    comp_id: Types.string().required(),
                 }
             }
         }
