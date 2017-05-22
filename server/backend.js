@@ -281,4 +281,18 @@ module.exports = function(server) {
             });
         }
     });
+
+    server.route({
+        method: 'GET',
+        path: '/recents',
+        handler: function (request, reply) {
+            server.methods.getRecents( function(err, recent_runners) {
+              if (err) {
+                  console.log(err);
+              } else {
+                reply(recent_runners).code(200);
+              }
+            });
+        }
+    });
 };

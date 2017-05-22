@@ -11,15 +11,20 @@ db.laps = new Datastore({ filename: 'db/laps', autoload: true });
 db.comps = new Datastore({ filename: 'db/comp', autoload: true });
 db.teams = new Datastore({ filename: 'db/teams', autoload: true });
 
-db.runners.ensureIndex({ fieldName: 'bid', unique: true }, function (err) {
-});
+// db.runners.ensureIndex({ fieldName: 'bid', unique: true }, function (err) {
+// });
 
 
 module.exports = function(server) {
 
     db.comps.findOne({ current: true }, function(err, current){
-      server.app.current = current._id
-      console.log('Current Comp:', current.name)
+      if (current){
+        server.app.current = current._id
+        console.log('Current Comp:', current.name)
+      } else {
+        console.log('No Current Comp, Set in admin')
+      }
+
     });
 
     server.method('getRunners', function (next) {
@@ -62,6 +67,7 @@ module.exports = function(server) {
 
     server.method('addLap', function (lap, next) {
       lap.comp_id = server.app.current
+      db.runners.update({ bid : lap.bid, comp_id : server.app.current },{ $inc: { laps: 1 }, $set: {recent: true}},{})
       db.laps.insert(lap, next);
 
       // db.laps.findOne({ bid: lap.bid, comp_id : server.app.current }).sort({ time: -1 }).exec(function (err, lastlap) {
@@ -108,7 +114,6 @@ module.exports = function(server) {
 
     server.method('getTop', function (next) {
         var top = [];
-        console.log(server.app.current)
         db.runners.find({comp_id : server.app.current}, function(err, runners) {
             _.forEach(runners, function(runner, i) {
                 db.laps.find({ bid: runner.bid, comp_id : server.app.current }, function(err, laps) {
@@ -137,5 +142,11 @@ module.exports = function(server) {
         }, function (err) {
             if (err){console.log(err)};
         });
+    });
+
+    server.method('getRecents', function (next) {
+      db.laps.find({ comp_id : server.app.current}).sort({ time: 1 }).limit(15).projection({ bid:1, _id: 0 }).exec(function(err, recent_laps){
+        db.runners.find({ $or: recent_laps, comp_id : server.app.current }, next)
+      });
     });
 };

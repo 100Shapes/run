@@ -35,9 +35,10 @@ module.exports = function(server) {
 
 
   function addLap(uuid) {
+    time =  new Date()
     var lap = {
       bid: uuid,
-      time: new Date(),
+      time: time.getTime(),
       station: server.app.station_id
     }
     server.methods.logLap(lap);
@@ -75,11 +76,11 @@ module.exports = function(server) {
   setInterval(function() {
     for (var uuid in inRange) {
 
-      console.log(inRange[uuid].peripheral.rssi, inRange[uuid].peripheral.uuid);
+      // console.log(inRange[uuid].peripheral.rssi, inRange[uuid].peripheral.uuid);
 
       if (inRange[uuid].lastSeen < (Date.now() - WINDOW)) {
         // beep()
-        console.log('out of window', uuid);
+        // console.log('out of window', uuid);
 
         delete inRange[uuid];
       }

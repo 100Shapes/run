@@ -17,16 +17,11 @@ rta.controller('indexController', ['$scope', '$interval', 'dataFactory', functio
       $scope.top = top;
     })
 
-  }, 1000, 1);
+    dataFactory.getRecents().success(function(recent_runners) {
+        $scope.recent_runners = recent_runners
+    })
 
-  $scope.getTimes = function(n) {
-    return new Array(n);
-  };
-
-  $interval(function() {
-
-  }, 500, 1);
-
+  }, 1000);
 
 }]);
 
@@ -238,6 +233,10 @@ rta.factory('dataFactory', ['$http', function($http) {
 
   dataFactory.getNearest = function() {
     return $http.get(urlBase + 'nearest');
+  };
+
+  dataFactory.getRecents = function() {
+    return $http.get(urlBase + 'recents');
   };
 
   return dataFactory;

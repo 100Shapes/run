@@ -10,6 +10,15 @@ module.exports = function(server) {
     });
     server.route({
         method: 'GET',
+        path: '/togo',
+        handler: {
+            file: {
+                path: 'public/togo.html'
+            }
+        }
+    });
+    server.route({
+        method: 'GET',
         path: '/admin',
         handler: {
             file: {
