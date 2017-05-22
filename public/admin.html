@@ -2,31 +2,51 @@
 <html lang="en">
 <head>
   	<meta charset="utf-8">
-  	<link rel="stylesheet" type="text/css" href="/public/styles/main.css">
+  	<link href="public/css/vendor/bootstrap.min.css" rel="stylesheet">
   	<title>Runners Tracker</title>
 </head>
 <body class='admin' ng-app="runApp" ng-controller="adminController">
+  <div class="container">
+        	<form novalidate class="add-runner">
+            <div class="form-group row">
+              <label class="col-sm-2 col-form-label">Competition</label>
+              <select class="col-sm-6 form-control" ng-options="comp.name for comp in comps track by comp._id" ng-change="set_current(current_comp)" ng-model="current_comp"></select>
+              <small class="col-sm-4" class="form-text text-muted">{{ current_comp._id }}</small>
+            </div>
+            <div class="form-group row">
+              <label class="col-sm-2 col-form-label">BID</label>
+              <small class="col-sm-6" ng-show="new_runner.rssi">{{ new_runner.bid }} {{ new_runner.rssi }}</small>
+            </div>
+            <div class="form-group">
+              <label>Team</label>
+              <select class="form-control" ng-options="team.name for team in teamss track by team._id" ng-model="runner.team_id">
+              </select><span ng-show=team._id> - {{ team._id }} </span>
+            </div>
+            <div class="form-group">
+              <label>Name</label>
+              <input class="form-control" type="text" ng-model="new_runner.name" ng-show="new_runner.bid"/>
+            </div>
+            <button type="submit" class="btn btn-primary" ng-click="add(new_runner)" ng-show="new_runner.bid">Submit</button>
+          </form>
+          <p>{{ message }}</p>
+        </div>
+      </div>
+      <div class="row">
+         <div class="col p-2">
+           <ul class="list-group">
+            <li class="list-group-item" ng-repeat="runner in runners">
+              <h5 class="m-1">{{ runner.name }}</h5>
+              <small>{{ runner.bid }}</small>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
 
-	<form novalidate class="add-runner">
-
-      Competition:
-      <select ng-repeat="comp in comps">
-        <option value="{{ comp._id }}">{{ comp.name }}</option>
-      </select> <br />
-	    BID: <input type="text" ng-model="new_runner.bid" /><span ng-show="new_runner.rssi">{{ new_runner.rssi }}</span><br />
-	    name: <input type="text" ng-model="new_runner.name" ng-show="new_runner.bid"/><br />
-	    <input type="submit" ng-click="add(new_runner)" ng-show="new_runner.bid" value="Save" />
-	</form>
-
-	<p>{{ message }}</p>
-
-	<ul ng-repeat="runner in runners">
-		<li>
-			{{ runner.name }} - {{ runner.bid }}
-		</li>
-	</ul>
-
-  	<script src="public/js/vendor/angular.min.js"></script>
-  	<script src="public/js/app.js"></script>
+  <script src="public/js/vendor/jquery-3.1.1.slim.min.js"></script>
+  <script src="public/js/vendor/tether.min.js"></script>
+  <script src="public/js/vendor/bootstrap.min.js"></script>
+  <script src="public/js/vendor/angular.min.js"></script>
+  <script src="public/js/app.js"></script>
 </body>
 </html>

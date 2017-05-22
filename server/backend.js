@@ -66,6 +66,46 @@ module.exports = function(server) {
 
     server.route({
         method: 'GET',
+        path: '/teams',
+        handler: function (request, reply) {
+            server.methods.getTeams(function(err, teams) {
+                if (err) {
+                    console.log(err);
+                } else {
+                    reply(teams).code(200);
+                }
+            })
+        }
+    });
+
+    server.route({
+        method: 'POST',
+        path: '/teams',
+        handler: function (request, reply) {
+            var team = {
+                name: request.payload.name,
+                desc:request.payload.desc,
+            };
+            server.methods.addTeam(team, function(err, newTeam) {
+                if (err) {
+                    console.log(err);
+                } else {
+                    reply(newTeam).code(200);
+                }
+            });
+        },
+        config: {
+            validate: {
+                payload: {
+                    name: Types.string().required().min(3),
+                    desc: Types.string().min(3),
+                }
+            }
+        }
+    });
+
+    server.route({
+        method: 'GET',
         path: '/laps',
         handler: function (request, reply) {
             if (request.query.bid) {
@@ -185,14 +225,28 @@ module.exports = function(server) {
     });
 
     server.route({
-        method: 'POST',
-        path: '/comps/set',
+        method: 'GET',
+        path: '/comps/current',
         handler: function (request, reply) {
-            server.methods.setComp(request.payload.comp_id, function(err, comp) {
+            server.methods.getCurrentComp( function(err, current) {
                 if (err) {
                     console.log(err);
                 } else {
-                    reply(comp).code(200);
+                    reply(current).code(200);
+                }
+            });
+        }
+    });
+
+    server.route({
+        method: 'POST',
+        path: '/comps/current',
+        handler: function (request, reply) {
+            server.methods.setCurrentComp(request.payload.comp_id, function(err, current) {
+                if (err) {
+                    console.log(err);
+                } else {
+                    reply(current).code(200);
                 }
             });
         },

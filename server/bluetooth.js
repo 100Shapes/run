@@ -1,5 +1,6 @@
 var noble = require('noble');
 var _ = require('lodash');
+var beep = require('beepbeep')
 
 var inRange = [];
 var WINDOW = 5000;	 // milliseconds
@@ -77,6 +78,7 @@ module.exports = function(server) {
 	  		console.log (inRange[uuid].peripheral.rssi, inRange[uuid].peripheral.uuid);
 
 	  		if (inRange[uuid].lastSeen < (Date.now() - WINDOW)) {
+					beep()
 	  			console.log ('out of window', uuid);
 
 	  			delete inRange[uuid];
@@ -85,4 +87,3 @@ module.exports = function(server) {
 	  	}
 	}, WINDOW/10);
 };
-

@@ -37,13 +37,22 @@ rta.controller('adminController', ['$scope', '$interval', 'dataFactory', functio
     $scope.comps = comps;
   })
 
+  dataFactory.getTeams().success(function (teams) {
+    $scope.teams = teams;
+  })
+
+
+  dataFactory.getCurrentComp().success(function (current){
+    $scope.current_comp = current;
+  })
+
+  $scope.set_current = function (new_current) {
+    dataFactory.setCurrentComp(new_current)
+  }
+
   $scope.add_comp = function () {
     dataFactory.addComp($scope.new_comp)
   }
-
-  $scope.set_comp = function() {
-    dataFactory.setComp($scope.current_comp)
-}
 
   $scope.add = function(runner) {
     runner.rssi = undefined;
@@ -101,12 +110,24 @@ rta.factory('dataFactory', ['$http', function($http) {
         return $http.post(urlBase + 'runners', runner);
     };
 
+    dataFactory.getTeams = function (teams) {
+        return $http.get(urlBase + 'teams')
+    };
+
+    dataFactory.addTeam = function (team) {
+        return $http.post(urlBase + 'teams', team)
+    };
+
     dataFactory.getComps = function () {
         return $http.get(urlBase + 'comps')
     };
 
-    dataFactory.setComp = function (comp) {
-        return $http.post(urlBase + 'comps/set', comp)
+    dataFactory.getCurrentComp = function () {
+        return $http.get(urlBase + 'comps/current')
+    };
+
+    dataFactory.setCurrentComp = function (comp) {
+        return $http.post(urlBase + 'comps/current', { "comp_id": comp._id})
     };
 
     dataFactory.addComp = function () {
