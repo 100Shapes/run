@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  	<meta charset="utf-8">
+  	<link href="/public/css/vendor/bootstrap.min.css" rel="stylesheet">
+  	<title>Runners Tracker</title>
+</head>
+<body class='admin' ng-app="runApp" ng-controller="adminController">
+  <div class="container p-2">
+        	<form novalidate class="add-runner">
+            <div class="form-group row">
+              <label class="col-sm-2 col-form-label">Competition</label>
+              <select class="col-sm-6 col-form-control" ng-options="comp.name for comp in comps track by comp._id" ng-change="set_current(current_comp)" ng-model="current_comp"></select>
+              <label class="col-sm-4 col-form-label"><small class="form-text text-muted">Competition ID: {{ current_comp._id }}</small></label>
+            </div>
+            <div class="form-group row">
+              <label class="col-sm-2 col-form-label">Team</label>
+              <select class="col-sm-6 col-form-control" ng-options="team.name for team in teams track by team._id" ng-model="new_runner.team"></select>
+              <small class="col-sm-4 col-form-label" ng-show="new_runner.team" >Team ID: {{ new_runner.team._id }}</small>
+            </div>
+            <div class="form-group row">
+              <label class="col-sm-2 col-form-label">Name</label>
+              <input class="col-sm-6 col-form-control" type="text" ng-model="new_runner.name"/>
+            </div>
+            <div class="form-group row">
+              <label class="col-sm-2 col-form-label" >Device BID</label>
+              <label class="col-sm-6 col-form-label" ng-show="new_runner.rssi">
+                 <strong>{{ new_runner.bid }}</strong>
+               </label>
+              <label class="col-sm-6 col-form-label" ng-hide="new_runner.rssi">No BID in range</label>
+            </div>
+            <div class="form-group row" ng-show="new_runner.rssi">
+              <label class="col-sm-2 col-form-label">Signal</label>
+              <label class="col-sm-2 col-form-label">RSSI: {{ new_runner.rssi }}</label>
+              <label class="col-sm-4 col-form-label progress">
+                  <div class="progress-bar" role="progressbar" aria-valuenow="{{ new_runner.rssi }}" aria-valuemin="-100" aria-valuemax="0" style="width: {{ 100 + new_runner.rssi }}%"></div>
+              </label>
+            </div>
+            <div class="form-group row" ng-show="new_runner.rssi">
+              <button type="submit" class="btn btn-primary" ng-click="add(new_runner)">Submit</button>
+            </div>
+          </form>
+          <p>{{ message }}</p>
+      <div class="row">
+        <div class="col p-2">
+          <a class="btn btn-outline-primary m-2" href="/admin/teams" role="button">Manage Teams</a>
+          <a class="btn btn-outline-primary m-2" href="/admin/comps" role="button">Manage Competitions</a>
+        </div>
+      </div>
+
+      <div class="row">
+         <div class="col p-2">
+           <ul class="list-group">
+            <li class="list-group-item" ng-repeat="runner in runners">
+              <h5 class="m-1">{{ runner.name }}</h5>
+              <small>{{ runner.bid }}</small>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    </div>
+
+  <script src="/public/js/vendor/jquery-3.1.1.slim.min.js"></script>
+  <script src="/public/js/vendor/tether.min.js"></script>
+  <script src="/public/js/vendor/bootstrap.min.js"></script>
+  <script src="/public/js/vendor/angular.min.js"></script>
+  <script src="/public/js/app.js"></script>
+</body>
+</html>

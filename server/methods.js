@@ -11,6 +11,10 @@ db.laps = new Datastore({ filename: 'db/laps', autoload: true });
 db.comps = new Datastore({ filename: 'db/comp', autoload: true });
 db.teams = new Datastore({ filename: 'db/teams', autoload: true });
 
+db.runners.ensureIndex({ fieldName: 'bid', unique: true }, function (err) {
+});
+
+
 module.exports = function(server) {
 
     db.comps.findOne({ current: true }, function(err, current){
@@ -27,14 +31,8 @@ module.exports = function(server) {
     });
 
     server.method('addRunner', function (runner, next) {
-        runner.comp_id = server.app.current
-        db.runners.insert(runner, function(err, new_runner){
-          if (runner.team_id) {
-            server.method.addRunnerToTeam(new_runner._id, runner.team_id)
-            new_runner.team_id = runner.team_id
-          }
-          next(err, new_runner)
-        });
+      runner.comp_id = server.app.current
+      db.runners.insert(runner, next);
     });
 
     server.method('addTeam', function (team, next) {
@@ -46,9 +44,9 @@ module.exports = function(server) {
         db.teams.find({ comp_id : server.app.current }, next);
     });
 
-    server.method('addRunnerToTeam', function (runner_id, team_id, next) {
-        db.teams.update({ _id : team_id }, { $push: { runners: runner_id } }, next);
-    });
+    // server.method('addRunnerToTeam', function (runner_id, team_id, next) {
+    //     db.teams.update({ _id : team_id }, { $push: { runners: runner_id } }, next);
+    // });
 
     server.method('getLaps', function (next) {
         db.laps.find({ comp_id : server.app.current }, next);

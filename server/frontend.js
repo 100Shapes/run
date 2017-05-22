@@ -13,7 +13,25 @@ module.exports = function(server) {
         path: '/admin',
         handler: {
             file: {
-                path: 'public/admin.html'
+                path: 'public/admin/index.html'
+            }
+        }
+    });
+    server.route({
+        method: 'GET',
+        path: '/admin/teams',
+        handler: {
+            file: {
+                path: 'public/admin/teams.html'
+            }
+        }
+    });
+    server.route({
+        method: 'GET',
+        path: '/admin/comps',
+        handler: {
+            file: {
+                path: 'public/admin/comps.html'
             }
         }
     });
@@ -36,7 +54,7 @@ module.exports = function(server) {
             }
         }
     }, function (err) {
-     
+
         if (err) {
             console.log('Failed loading hapi-less');
         }

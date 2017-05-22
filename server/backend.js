@@ -42,13 +42,16 @@ module.exports = function(server) {
                 bid: request.payload.bid,
                 name: request.payload.name,
                 start_time:request.payload.start_time,
-                team:request.payload.team,
+                team_id:request.payload.team_id,
             };
             server.methods.addRunner(runner, function(err, newRunner) {
                 if (err) {
                     console.log(err);
+                    if (err.errorType) {
+                      reply("Runner Exists").code(409)
+                    }
                 } else {
-                    reply(newRunner).code(200);
+                    reply(newRunner).code(201);
                 }
             });
         },
@@ -58,7 +61,7 @@ module.exports = function(server) {
                     bid: Types.string().required().min(3),
                     name: Types.string().required().min(3),
                     start_time: Types.date(),
-                    team: Types.string(),
+                    team_id: Types.string(),
                 }
             }
         }
@@ -148,7 +151,7 @@ module.exports = function(server) {
                 if (err) {
                     console.log(err);
                 } else {
-                    reply(newLap).code(200);
+                    reply(newLap).code(201);
                 }
             });
         },
@@ -205,11 +208,11 @@ module.exports = function(server) {
               laps: request.payload.laps,
               desc: request.payload.desc,
             };
-            server.methods.addComp(comp, function(err, comp) {
+            server.methods.addComp(comp, function(err, new_comp) {
                 if (err) {
                     console.log(err);
                 } else {
-                    reply(comp).code(200);
+                    reply(new_comp).code(201);
                 }
             });
         },
@@ -246,7 +249,7 @@ module.exports = function(server) {
                 if (err) {
                     console.log(err);
                 } else {
-                    reply(current).code(200);
+                    reply(current).code(201);
                 }
             });
         },
