@@ -6,7 +6,7 @@
   	<title>Runners Tracker</title>
 </head>
 <body class='admin' ng-app="runApp" ng-controller="adminController">
-  <div class="container">
+  <div class="container p-2">
         	<form novalidate class="add-runner">
             <div class="form-group row">
               <label class="col-sm-2 col-form-label">Competition</label>
@@ -15,18 +15,28 @@
             </div>
             <div class="form-group row">
               <label class="col-sm-2 col-form-label">BID</label>
-              <small class="col-sm-6" ng-show="new_runner.rssi">{{ new_runner.bid }} {{ new_runner.rssi }}</small>
+              <label class="col-sm-4" ng-show="new_runner.rssi" ng-init="No New BID in range">{{ new_runner.bid }}</label>
             </div>
-            <div class="form-group">
-              <label>Team</label>
-              <select class="form-control" ng-options="team.name for team in teamss track by team._id" ng-model="runner.team_id">
-              </select><span ng-show=team._id> - {{ team._id }} </span>
+            <div class="form-group row" ng-show="new_runner.rssi">
+              <div class="col-sm-8">
+                <div class="w-100 progress">
+                  <div class="progress-bar" role="progressbar" aria-valuenow="{{ new_runner.rssi }}" aria-valuemin="-100" aria-valuemax="0" style="width: {{ 100 + new_runner.rssi }}%"></div>
+                </div>
+              </div>
+              <label class="col-sm-4">RSSI: {{ new_runner.rssi }}</label>
             </div>
-            <div class="form-group">
-              <label>Name</label>
-              <input class="form-control" type="text" ng-model="new_runner.name" ng-show="new_runner.bid"/>
+            <div class="bid_found" ng-show="new_runner.rssi">
+              <div class="form-group row">
+                <label class="col-sm-2">Team</label>
+                <select class="col-sm-6 form-control" ng-options="team.name for team in teamss track by team._id" ng-model="runner.team_id"></select>
+                <span class="col-sm-4" ng-show=team._id>{{ team._id }}</span>
+              </div>
+              <div class="form-group row">
+                <label class="col-sm-2">Name</label>
+                <input class="col-sm-6 form-control" type="text" ng-model="new_runner.name"/>
+              </div>
+              <button type="submit" class="btn btn-primary" ng-click="add(new_runner)">Submit</button>
             </div>
-            <button type="submit" class="btn btn-primary" ng-click="add(new_runner)" ng-show="new_runner.bid">Submit</button>
           </form>
           <p>{{ message }}</p>
         </div>
