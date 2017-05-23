@@ -21,10 +21,11 @@
         <div class="d-flex flex-column" ng-repeat="runner in recent_runners">
 
           <!-- with laps -->
-          <div ng-show="comp.laps">
+          <div ng-show="(comp.laps - runner.laps)>0">
             <div class="p-2 m-2 d-flex justify-content-between align-items-center bg-faded rounded">
               <h2 class="p-4">{{ runner.name }}</h2>
-              <div class="p-4 display-4">{{ comp.laps - runner.laps }} Remaining</div>
+              {{ runner }}
+              <div class="p-4 display-4">{{ comp.laps }} - {{ runner.laps }} Remaining</div>
             </div>
           </div>
         </div>

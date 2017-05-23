@@ -32,7 +32,8 @@
           <div ng-show="comp.laps">
             <div class="p-2 m-2 d-flex justify-content-between align-items-center bg-faded rounded">
               <h2 class="p-4">{{ runner.name }}</h2>
-              <div class="align-self-center progress w-50" ng-if="runner.laps<comp.laps+1">
+
+              <div class="align-self-center progress w-50" ng-if="runner.laps<=comp.laps">
                 <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" role="progressbar" style="width: {{runner.laps/comp.laps * 100}}%; height: 30px;" aria-valuenow="{{runner.laps}}" aria-valuemin="0" aria-valuemax="{{ comp.laps }}"></div>
               </div>
               <div class="progress" ng-if="runner.laps>comp.laps">

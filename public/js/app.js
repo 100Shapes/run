@@ -57,6 +57,19 @@ rta.controller('adminController', ['$scope', '$interval', 'dataFactory', functio
       });
   };
 
+  $scope.start = function(start_time) {
+    if (start_time == 'now'){
+      start_time = (new Date()).getTime();
+    }
+    dataFactory.setCurrentStart(start_time)
+      .success(function(response) {
+        $scope.message = "Competition started";
+      })
+      .error(function(response) {
+          $scope.message = "Error occured: " + response;
+      });
+  };
+
   function update_all() {
     update_runners();
     dataFactory.getComps().success(function(comps) {
@@ -204,6 +217,12 @@ rta.factory('dataFactory', ['$http', function($http) {
   dataFactory.setCurrentComp = function(comp) {
     return $http.post(urlBase + 'comps/current', {
       "comp_id": comp._id
+    })
+  };
+
+  dataFactory.setCurrentStart  = function(start_time) {
+    return $http.post(urlBase + 'comps/start', {
+      "start_time": start_time
     })
   };
 

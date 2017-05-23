@@ -263,6 +263,27 @@ module.exports = function(server) {
     });
 
     server.route({
+        method: 'POST',
+        path: '/comps/start',
+        handler: function (request, reply) {
+            server.methods.setCurrentStart(request.payload.start_time, function(err, current) {
+                if (err) {
+                    console.log(err);
+                } else {
+                    reply(current).code(201);
+                }
+            });
+        },
+        config: {
+            validate: {
+                payload: {
+                    start_time: Types.number().integer(),
+                }
+            }
+        }
+    });
+
+    server.route({
         method: 'GET',
         path: '/top',
         handler: function (request, reply) {

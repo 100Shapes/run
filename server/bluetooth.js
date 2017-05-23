@@ -33,15 +33,14 @@ module.exports = function(server) {
   });
 
 
-
   function addLap(uuid) {
-    time =  new Date()
+    time = new Date();
     var lap = {
       bid: uuid,
       time: time.getTime(),
       station: server.app.station_id
     }
-    server.methods.logLap(lap);
+    server.methods.logLap(lap)
     server.methods.addLap(lap, function(err, newLap) {
       if (err) {
         console.log(err);
