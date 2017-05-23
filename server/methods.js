@@ -175,6 +175,15 @@ module.exports = function(server) {
 
   server.method('setCurrentStart', function(start_time, next) {
     server.app.start_time = start_time
+    db.laps.remove({
+      comp_id: server.app.current
+    },{ multi: true })
+    db.runners.update({ comp_id: server.app.current
+    }, {
+      $set: {
+        laps: 0
+      }
+    },{ multi: true })
     db.comps.update({
       _id: server.app.current
     }, {
@@ -236,25 +245,7 @@ module.exports = function(server) {
       db.runners.find({
         $or: recent_laps,
         comp_id: server.app.current
-      }, function(err, runners) {
-        _.forEach(runners, function(runner, i) {
-          db.laps.find({
-            bid: runner.bid,
-            comp_id: server.app.current
-          }, function(err, laps) {
-            if (laps) {
-              recents.push({
-                name: runner.name,
-                laps: laps.length,
-                bid: runner.bid
-              })
-            }
-            if (i == runners.length - 1) {
-              next(recents);
-            }
-          })
-        })
-      })
+      }, next)
     })
   })
 };
