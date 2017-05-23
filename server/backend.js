@@ -287,8 +287,12 @@ module.exports = function(server) {
         method: 'GET',
         path: '/top',
         handler: function (request, reply) {
-            server.methods.getTop( function(top) {
+            server.methods.getTop( function(err, top) {
+              if (err) {
+                  console.log(err);
+              } else {
                 reply(top).code(200);
+              }
             });
         }
     });
