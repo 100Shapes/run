@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <link href="/public/css/vendor/bootstrap.min.css" rel="stylesheet">
+  <!-- <link rel="stylesheet" type="text/css" href="/public/styles/main.css"> -->
+  <title>Runners Tracker</title>
+</head>
+
+<body class='index' ng-app="runApp" ng-controller="indexController">
+  <nav class="navbar navbar-light" style="background-color: #e3f2fd;">
+    <a class="navbar-brand" href="#">
+      <img src="/public/img/ariano-logo.png" height="30" class="d-inline-block align-top" alt=""> {{ comp.name }}
+    </a>
+  </nav>
+
+  <div class="container">
+    <div class="row">
+      <div class="col p-2">
+        <h1>Leaderboard
+          <small class="ml-3" ng-show="comp.laps">- {{ comp.laps }} laps</small>
+        </h1>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col p-2">
+        <div class="d-flex flex-column" ng-repeat="runner in top">
+
+          <!-- with laps -->
+          <div ng-show="comp.laps">
+            <div class="p-2 m-2 d-flex justify-content-between align-items-center bg-faded rounded">
+              <h2 class="p-4">{{ runner.name }}</h2>
+
+              <div class="align-self-center progress w-50" ng-if="runner.laps<=comp.laps">
+                <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" role="progressbar" style="width: {{runner.laps/comp.laps * 100}}%; height: 30px;" aria-valuenow="{{runner.laps}}" aria-valuemin="0" aria-valuemax="{{ comp.laps }}"></div>
+              </div>
+              <div class="progress" ng-if="runner.laps>comp.laps">
+                <span>COMPLETE</span>
+              </div>
+              <div class="p-4 display-4">{{ runner.laps }}</div>
+            </div>
+          </div>
+
+          <!-- without laps -->
+          <div ng-hide="comp.laps">
+            <div class="p-2 m-2 d-flex justify-content-between align-items-center bg-faded rounded">
+              <h2 class="p-4">{{ runner.name }}</h2>
+              <div class="p-4 display-4">{{runner.time}}</div>
+            </div>
+          </div>
+
+
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="/public/js/vendor/jquery-3.1.1.slim.min.js"></script>
+  <script src="/public/js/vendor/tether.min.js"></script>
+  <script src="/public/js/vendor/bootstrap.min.js"></script>
+  <script src="/public/js/vendor/angular.min.js"></script>
+  <script src="/public/js/app.js"></script>
+
+
+</body>
+
+</html>

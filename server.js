@@ -1,9 +1,19 @@
 var Hapi = require('hapi');
-var routes = require('./routes');
 
-var config = { };
-var server = new Hapi.Server('0.0.0.0', 8080, config);
+var server = new Hapi.Server({ debug: { 'request': ['error', 'uncaught', 'hapi-less'] }});
 
-server.addRoutes(routes);
+server.connection({ port: 8080 });
 
-server.start();
+
+var backend = require('./server/backend')(server);
+var methods = require('./server/methods')(server);
+var frontend = require('./server/frontend')(server);
+var bluetooth = require('./server/bluetooth')(server);
+var Path = require('path');
+
+server.start(function() {
+    console.log("Server started", server.info.uri);
+    server.app.station_id = process.env.STATION_ID || "Finish"
+});
+
+module.exports = server;
